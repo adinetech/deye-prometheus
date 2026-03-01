@@ -1,0 +1,643 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
+    { "type": "panel", "id": "gauge", "name": "Gauge", "version": "" },
+    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
+    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
+    { "type": "panel", "id": "bargauge", "name": "Bar gauge", "version": "" }
+  ],
+  "title": "Deye Hybrid Inverter",
+  "description": "Full monitoring dashboard for Deye SUN-3K-SG04LP1-24-EU-SM1",
+  "uid": "deye-hybrid-v1",
+  "version": 1,
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "tags": ["solar", "deye", "inverter", "battery"],
+  "style": "dark",
+  "graphTooltip": 1,
+  "panels": [
+
+    {
+      "id": 1,
+      "type": "row",
+      "title": "☀️ Solar",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total PV Power",
+      "description": "PV1 + PV2 combined input power",
+      "gridPos": { "h": 5, "w": 5, "x": 0, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "value_and_name",
+        "colorMode": "background",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "green", "value": 1500 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "deye_pv1_power + deye_pv2_power",
+          "legendFormat": "Total PV Power"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "PV1 Power",
+      "gridPos": { "h": 3, "w": 3, "x": 5, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power", "legendFormat": "PV1" }]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "PV2 Power",
+      "gridPos": { "h": 3, "w": 3, "x": 8, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_power", "legendFormat": "PV2" }]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Daily Production",
+      "gridPos": { "h": 3, "w": 4, "x": 11, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 5 }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_production", "legendFormat": "Today" }]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Total Production",
+      "gridPos": { "h": 3, "w": 4, "x": 15, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwatth",
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_production", "legendFormat": "Lifetime" }]
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "PV1 Voltage",
+      "gridPos": { "h": 2, "w": 3, "x": 5, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "orange" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_voltage", "legendFormat": "PV1 V" }]
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "PV2 Voltage",
+      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "orange" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_voltage", "legendFormat": "PV2 V" }]
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "PV Power Over Time",
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": {
+        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 15 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "PV1" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F5A623", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "PV2" }, "properties": [{ "id": "color", "value": { "fixedColor": "#7EB26D", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power", "legendFormat": "PV1" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_power", "legendFormat": "PV2" }
+      ]
+    },
+
+    {
+      "id": 10,
+      "type": "row",
+      "title": "🔋 Battery",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 12 }
+    },
+    {
+      "id": 11,
+      "type": "gauge",
+      "title": "Battery SOC",
+      "gridPos": { "h": 7, "w": 5, "x": 0, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 20 },
+              { "color": "yellow", "value": 40 },
+              { "color": "green", "value": 60 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_soc", "legendFormat": "SOC" }]
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Battery Power",
+      "description": "Positive = discharging, Negative = charging",
+      "gridPos": { "h": 3, "w": 4, "x": 5, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }, { "color": "red", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Power" }]
+    },
+    {
+      "id": 13,
+      "type": "stat",
+      "title": "Battery Voltage",
+      "gridPos": { "h": 2, "w": 2, "x": 9, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "blue" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_voltage", "legendFormat": "Voltage" }]
+    },
+    {
+      "id": 14,
+      "type": "stat",
+      "title": "Battery Temperature",
+      "gridPos": { "h": 2, "w": 2, "x": 11, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 35 }, { "color": "red", "value": 45 }] },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_temperature", "legendFormat": "Temp" }]
+    },
+    {
+      "id": 15,
+      "type": "stat",
+      "title": "Daily Battery Charge",
+      "gridPos": { "h": 2, "w": 3, "x": 5, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "blue" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_battery_charge", "legendFormat": "Charged Today" }]
+    },
+    {
+      "id": 16,
+      "type": "stat",
+      "title": "Daily Battery Discharge",
+      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_battery_discharge", "legendFormat": "Discharged Today" }]
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "Battery SOC + Power Over Time",
+      "gridPos": { "h": 7, "w": 10, "x": 14, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "SOC %" },
+            "properties": [
+              { "id": "unit", "value": "percent" },
+              { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } },
+              { "id": "custom.axisPlacement", "value": "right" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Battery W" },
+            "properties": [
+              { "id": "unit", "value": "watt" },
+              { "id": "color", "value": { "fixedColor": "#E02F44", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_soc", "legendFormat": "SOC %" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Battery W" }
+      ]
+    },
+
+    {
+      "id": 20,
+      "type": "row",
+      "title": "⚡ Grid",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 20 }
+    },
+    {
+      "id": 21,
+      "type": "stat",
+      "title": "Grid Power",
+      "description": "Positive = importing, Negative = exporting",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0 }, { "color": "red", "value": 500 }]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid Power" }]
+    },
+    {
+      "id": 22,
+      "type": "stat",
+      "title": "Grid Voltage L1",
+      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "yellow" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_voltage_l1", "legendFormat": "L1" }]
+    },
+    {
+      "id": 23,
+      "type": "stat",
+      "title": "Grid Voltage L2",
+      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "yellow" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_voltage_l2", "legendFormat": "L2" }]
+    },
+    {
+      "id": 24,
+      "type": "stat",
+      "title": "Daily Energy Bought",
+      "gridPos": { "h": 2, "w": 3, "x": 10, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_energy_bought", "legendFormat": "Bought Today" }]
+    },
+    {
+      "id": 25,
+      "type": "stat",
+      "title": "Daily Energy Sold",
+      "gridPos": { "h": 2, "w": 3, "x": 13, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_energy_sold", "legendFormat": "Sold Today" }]
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "Grid Power Over Time",
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 21 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": { "lineWidth": 2, "fillOpacity": 15 },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 0 }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Grid" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid" }]
+    },
+    {
+      "id": 27,
+      "type": "stat",
+      "title": "Grid Current L1",
+      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 23 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "amp", "color": { "mode": "fixed", "fixedColor": "super-light-yellow" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_current_l1", "legendFormat": "L1" }]
+    },
+    {
+      "id": 28,
+      "type": "stat",
+      "title": "Grid Current L2",
+      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 23 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "amp", "color": { "mode": "fixed", "fixedColor": "super-light-yellow" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_current_l2", "legendFormat": "L2" }]
+    },
+    {
+      "id": 29,
+      "type": "stat",
+      "title": "Total Energy Bought",
+      "gridPos": { "h": 2, "w": 3, "x": 10, "y": 23 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_energy_bought", "legendFormat": "Total Bought" }]
+    },
+    {
+      "id": 30,
+      "type": "stat",
+      "title": "Total Energy Sold",
+      "gridPos": { "h": 2, "w": 3, "x": 13, "y": 23 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_energy_sold", "legendFormat": "Total Sold" }]
+    },
+
+    {
+      "id": 40,
+      "type": "row",
+      "title": "🏠 Load",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 28 }
+    },
+    {
+      "id": 41,
+      "type": "stat",
+      "title": "Total Load Power",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1000 }, { "color": "red", "value": 2500 }] },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Total Load" }]
+    },
+    {
+      "id": 42,
+      "type": "stat",
+      "title": "Load L1 Power",
+      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l1_power", "legendFormat": "L1" }]
+    },
+    {
+      "id": 43,
+      "type": "stat",
+      "title": "Load L2 Power",
+      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l2_power", "legendFormat": "L2" }]
+    },
+    {
+      "id": 44,
+      "type": "stat",
+      "title": "Daily Load Consumption",
+      "gridPos": { "h": 2, "w": 4, "x": 10, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_load_consumption", "legendFormat": "Today" }]
+    },
+    {
+      "id": 45,
+      "type": "timeseries",
+      "title": "Load Over Time",
+      "gridPos": { "h": 7, "w": 10, "x": 14, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": {
+        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 20 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Total Load" }, "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "L1" }, "properties": [{ "id": "color", "value": { "fixedColor": "#CA95E5", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "L2" }, "properties": [{ "id": "color", "value": { "fixedColor": "#DDA0DD", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Total Load" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l1_power", "legendFormat": "L1" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l2_power", "legendFormat": "L2" }
+      ]
+    },
+
+    {
+      "id": 50,
+      "type": "row",
+      "title": "🔧 Inverter",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 }
+    },
+    {
+      "id": 51,
+      "type": "gauge",
+      "title": "DC Temperature",
+      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 37 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "min": 0,
+          "max": 80,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 50 }, { "color": "red", "value": 65 }] },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_dc_temperature", "legendFormat": "DC Temp" }]
+    },
+    {
+      "id": 52,
+      "type": "gauge",
+      "title": "AC Temperature",
+      "gridPos": { "h": 5, "w": 4, "x": 4, "y": 37 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "min": 0,
+          "max": 80,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 50 }, { "color": "red", "value": 65 }] },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_ac_temperature", "legendFormat": "AC Temp" }]
+    },
+    {
+      "id": 53,
+      "type": "stat",
+      "title": "Grid Frequency",
+      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 37 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "light-blue" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_frequency", "legendFormat": "Grid Hz" }]
+    },
+    {
+      "id": 54,
+      "type": "stat",
+      "title": "Load Frequency",
+      "gridPos": { "h": 2, "w": 3, "x": 11, "y": 37 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "light-blue" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_frequency", "legendFormat": "Load Hz" }]
+    },
+    {
+      "id": 55,
+      "type": "stat",
+      "title": "Total Inverter Power",
+      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 39 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "light-orange" } } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_power", "legendFormat": "Total Power" }]
+    },
+    {
+      "id": 56,
+      "type": "timeseries",
+      "title": "Temperature Over Time",
+      "gridPos": { "h": 5, "w": 10, "x": 14, "y": 37 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "fieldConfig": {
+        "defaults": { "unit": "celsius", "custom": { "lineWidth": 2 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "DC" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF7383", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "AC" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FA6400", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_dc_temperature", "legendFormat": "DC" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_ac_temperature", "legendFormat": "AC" }
+      ]
+    },
+
+    {
+      "id": 60,
+      "type": "row",
+      "title": "🌊 Energy Flow Overview",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 }
+    },
+    {
+      "id": 61,
+      "type": "timeseries",
+      "title": "Energy Flow — Solar / Battery / Grid / Load",
+      "description": "Key power flows over time",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 43 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max", "mean"] }
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 8 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Solar" },   "properties": [{ "id": "color", "value": { "fixedColor": "#F5A623", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Battery" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Grid" },    "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Load" },    "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power + deye_pv2_power", "legendFormat": "Solar" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Battery" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid" },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Load" }
+      ]
+    }
+  ]
+}
