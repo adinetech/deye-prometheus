@@ -1,643 +1,4048 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
-    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
-    { "type": "panel", "id": "gauge", "name": "Gauge", "version": "" },
-    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
-    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
-    { "type": "panel", "id": "bargauge", "name": "Bar gauge", "version": "" }
-  ],
-  "title": "Deye Hybrid Inverter",
-  "description": "Full monitoring dashboard for Deye SUN-3K-SG04LP1-24-EU-SM1",
-  "uid": "deye-hybrid-v1",
-  "version": 1,
-  "schemaVersion": 38,
-  "refresh": "10s",
-  "time": { "from": "now-6h", "to": "now" },
-  "timepicker": {},
-  "tags": ["solar", "deye", "inverter", "battery"],
-  "style": "dark",
-  "graphTooltip": 1,
-  "panels": [
-
-    {
-      "id": 1,
-      "type": "row",
-      "title": "☀️ Solar",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
-    },
-    {
-      "id": 2,
-      "type": "stat",
-      "title": "Total PV Power",
-      "description": "PV1 + PV2 combined input power",
-      "gridPos": { "h": 5, "w": 5, "x": 0, "y": 1 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "orientation": "auto",
-        "textMode": "value_and_name",
-        "colorMode": "background",
-        "graphMode": "area"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "blue", "value": null },
-              { "color": "yellow", "value": 500 },
-              { "color": "green", "value": 1500 }
-            ]
-          },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [
+    "__inputs": [
         {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "deye_pv1_power + deye_pv2_power",
-          "legendFormat": "Total PV Power"
+            "name": "DS_PROMETHEUS",
+            "label": "Prometheus",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "prometheus",
+            "pluginName": "Prometheus"
         }
-      ]
-    },
-    {
-      "id": 3,
-      "type": "stat",
-      "title": "PV1 Power",
-      "gridPos": { "h": 3, "w": 3, "x": 5, "y": 1 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power", "legendFormat": "PV1" }]
-    },
-    {
-      "id": 4,
-      "type": "stat",
-      "title": "PV2 Power",
-      "gridPos": { "h": 3, "w": 3, "x": 8, "y": 1 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_power", "legendFormat": "PV2" }]
-    },
-    {
-      "id": 5,
-      "type": "stat",
-      "title": "Daily Production",
-      "gridPos": { "h": 3, "w": 4, "x": 11, "y": 1 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "kwatth",
-          "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "yellow", "value": null }, { "color": "green", "value": 5 }] }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_production", "legendFormat": "Today" }]
-    },
-    {
-      "id": 6,
-      "type": "stat",
-      "title": "Total Production",
-      "gridPos": { "h": 3, "w": 4, "x": 15, "y": 1 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "kwatth",
-          "color": { "mode": "fixed", "fixedColor": "green" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_production", "legendFormat": "Lifetime" }]
-    },
-    {
-      "id": 7,
-      "type": "stat",
-      "title": "PV1 Voltage",
-      "gridPos": { "h": 2, "w": 3, "x": 5, "y": 4 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "orange" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_voltage", "legendFormat": "PV1 V" }]
-    },
-    {
-      "id": 8,
-      "type": "stat",
-      "title": "PV2 Voltage",
-      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 4 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "orange" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_voltage", "legendFormat": "PV2 V" }]
-    },
-    {
-      "id": 9,
-      "type": "timeseries",
-      "title": "PV Power Over Time",
-      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 4 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
-      "fieldConfig": {
-        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 15 } },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "PV1" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F5A623", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "PV2" }, "properties": [{ "id": "color", "value": { "fixedColor": "#7EB26D", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power", "legendFormat": "PV1" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv2_power", "legendFormat": "PV2" }
-      ]
-    },
-
-    {
-      "id": 10,
-      "type": "row",
-      "title": "🔋 Battery",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 12 }
-    },
-    {
-      "id": 11,
-      "type": "gauge",
-      "title": "Battery SOC",
-      "gridPos": { "h": 7, "w": 5, "x": 0, "y": 13 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "orientation": "auto",
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "red", "value": null },
-              { "color": "orange", "value": 20 },
-              { "color": "yellow", "value": 40 },
-              { "color": "green", "value": 60 }
-            ]
-          },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_soc", "legendFormat": "SOC" }]
-    },
-    {
-      "id": 12,
-      "type": "stat",
-      "title": "Battery Power",
-      "description": "Positive = discharging, Negative = charging",
-      "gridPos": { "h": 3, "w": 4, "x": 5, "y": 13 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }, { "color": "red", "value": 1 }] },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Power" }]
-    },
-    {
-      "id": 13,
-      "type": "stat",
-      "title": "Battery Voltage",
-      "gridPos": { "h": 2, "w": 2, "x": 9, "y": 13 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "blue" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_voltage", "legendFormat": "Voltage" }]
-    },
-    {
-      "id": 14,
-      "type": "stat",
-      "title": "Battery Temperature",
-      "gridPos": { "h": 2, "w": 2, "x": 11, "y": 13 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "celsius",
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 35 }, { "color": "red", "value": 45 }] },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_temperature", "legendFormat": "Temp" }]
-    },
-    {
-      "id": 15,
-      "type": "stat",
-      "title": "Daily Battery Charge",
-      "gridPos": { "h": 2, "w": 3, "x": 5, "y": 16 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "blue" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_battery_charge", "legendFormat": "Charged Today" }]
-    },
-    {
-      "id": 16,
-      "type": "stat",
-      "title": "Daily Battery Discharge",
-      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 16 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_battery_discharge", "legendFormat": "Discharged Today" }]
-    },
-    {
-      "id": 17,
-      "type": "timeseries",
-      "title": "Battery SOC + Power Over Time",
-      "gridPos": { "h": 7, "w": 10, "x": 14, "y": 13 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
-      "fieldConfig": {
-        "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 10 } },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "SOC %" },
-            "properties": [
-              { "id": "unit", "value": "percent" },
-              { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } },
-              { "id": "custom.axisPlacement", "value": "right" }
-            ]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Battery W" },
-            "properties": [
-              { "id": "unit", "value": "watt" },
-              { "id": "color", "value": { "fixedColor": "#E02F44", "mode": "fixed" } }
-            ]
-          }
-        ]
-      },
-      "targets": [
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_soc", "legendFormat": "SOC %" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Battery W" }
-      ]
-    },
-
-    {
-      "id": 20,
-      "type": "row",
-      "title": "⚡ Grid",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 20 }
-    },
-    {
-      "id": 21,
-      "type": "stat",
-      "title": "Grid Power",
-      "description": "Positive = importing, Negative = exporting",
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0 }, { "color": "red", "value": 500 }]
-          },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid Power" }]
-    },
-    {
-      "id": 22,
-      "type": "stat",
-      "title": "Grid Voltage L1",
-      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "yellow" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_voltage_l1", "legendFormat": "L1" }]
-    },
-    {
-      "id": 23,
-      "type": "stat",
-      "title": "Grid Voltage L2",
-      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "volt", "color": { "mode": "fixed", "fixedColor": "yellow" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_voltage_l2", "legendFormat": "L2" }]
-    },
-    {
-      "id": 24,
-      "type": "stat",
-      "title": "Daily Energy Bought",
-      "gridPos": { "h": 2, "w": 3, "x": 10, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_energy_bought", "legendFormat": "Bought Today" }]
-    },
-    {
-      "id": 25,
-      "type": "stat",
-      "title": "Daily Energy Sold",
-      "gridPos": { "h": 2, "w": 3, "x": 13, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "green" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_energy_sold", "legendFormat": "Sold Today" }]
-    },
-    {
-      "id": 26,
-      "type": "timeseries",
-      "title": "Grid Power Over Time",
-      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 21 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "custom": { "lineWidth": 2, "fillOpacity": 15 },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 0 }] }
+    ],
+    "__requires": [
+        {
+            "type": "grafana",
+            "id": "grafana",
+            "name": "Grafana",
+            "version": "10.0.0"
         },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "Grid" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid" }]
-    },
-    {
-      "id": 27,
-      "type": "stat",
-      "title": "Grid Current L1",
-      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 23 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "amp", "color": { "mode": "fixed", "fixedColor": "super-light-yellow" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_current_l1", "legendFormat": "L1" }]
-    },
-    {
-      "id": 28,
-      "type": "stat",
-      "title": "Grid Current L2",
-      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 23 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "amp", "color": { "mode": "fixed", "fixedColor": "super-light-yellow" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_current_l2", "legendFormat": "L2" }]
-    },
-    {
-      "id": 29,
-      "type": "stat",
-      "title": "Total Energy Bought",
-      "gridPos": { "h": 2, "w": 3, "x": 10, "y": 23 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "red" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_energy_bought", "legendFormat": "Total Bought" }]
-    },
-    {
-      "id": 30,
-      "type": "stat",
-      "title": "Total Energy Sold",
-      "gridPos": { "h": 2, "w": 3, "x": 13, "y": 23 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "green" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_energy_sold", "legendFormat": "Total Sold" }]
-    },
-
-    {
-      "id": 40,
-      "type": "row",
-      "title": "🏠 Load",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 28 }
-    },
-    {
-      "id": 41,
-      "type": "stat",
-      "title": "Total Load Power",
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 29 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "watt",
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1000 }, { "color": "red", "value": 2500 }] },
-          "color": { "mode": "thresholds" }
+        {
+            "type": "datasource",
+            "id": "prometheus",
+            "name": "Prometheus",
+            "version": "1.0.0"
+        },
+        {
+            "type": "panel",
+            "id": "timeseries",
+            "name": "Time series",
+            "version": ""
+        },
+        {
+            "type": "panel",
+            "id": "gauge",
+            "name": "Gauge",
+            "version": ""
+        },
+        {
+            "type": "panel",
+            "id": "stat",
+            "name": "Stat",
+            "version": ""
         }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Total Load" }]
+    ],
+    "title": "Deye Hybrid Inverter",
+    "description": "Full monitoring — Deye SUN-3K-SG04LP1-24-EU-SM1",
+    "uid": "deye-hybrid-v2",
+    "version": 2,
+    "schemaVersion": 38,
+    "refresh": "10s",
+    "time": {
+        "from": "now-6h",
+        "to": "now"
     },
-    {
-      "id": 42,
-      "type": "stat",
-      "title": "Load L1 Power",
-      "gridPos": { "h": 2, "w": 3, "x": 4, "y": 29 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "purple" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l1_power", "legendFormat": "L1" }]
-    },
-    {
-      "id": 43,
-      "type": "stat",
-      "title": "Load L2 Power",
-      "gridPos": { "h": 2, "w": 3, "x": 7, "y": 29 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "purple" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l2_power", "legendFormat": "L2" }]
-    },
-    {
-      "id": 44,
-      "type": "stat",
-      "title": "Daily Load Consumption",
-      "gridPos": { "h": 2, "w": 4, "x": 10, "y": 29 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "kwatth", "color": { "mode": "fixed", "fixedColor": "purple" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_daily_load_consumption", "legendFormat": "Today" }]
-    },
-    {
-      "id": 45,
-      "type": "timeseries",
-      "title": "Load Over Time",
-      "gridPos": { "h": 7, "w": 10, "x": 14, "y": 29 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
-      "fieldConfig": {
-        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 20 } },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "Total Load" }, "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "L1" }, "properties": [{ "id": "color", "value": { "fixedColor": "#CA95E5", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "L2" }, "properties": [{ "id": "color", "value": { "fixedColor": "#DDA0DD", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Total Load" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l1_power", "legendFormat": "L1" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_l2_power", "legendFormat": "L2" }
-      ]
-    },
-
-    {
-      "id": 50,
-      "type": "row",
-      "title": "🔧 Inverter",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 }
-    },
-    {
-      "id": 51,
-      "type": "gauge",
-      "title": "DC Temperature",
-      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 37 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdMarkers": true },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "celsius",
-          "min": 0,
-          "max": 80,
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 50 }, { "color": "red", "value": 65 }] },
-          "color": { "mode": "thresholds" }
+    "timepicker": {},
+    "tags": [
+        "solar",
+        "deye",
+        "inverter",
+        "battery"
+    ],
+    "style": "dark",
+    "graphTooltip": 1,
+    "panels": [
+        {
+            "id": 1,
+            "type": "row",
+            "title": "☀️ Solar",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "id": 2,
+            "type": "stat",
+            "title": "Total PV Power",
+            "gridPos": {
+                "h": 3,
+                "w": 4,
+                "x": 0,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "area",
+                "textMode": "value_and_name"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 200
+                            },
+                            {
+                                "color": "green",
+                                "value": 1000
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_power + deye_pv2_power",
+                    "legendFormat": "Total PV"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "type": "stat",
+            "title": "PV1 Power",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 4,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#F5A623"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_power",
+                    "legendFormat": "PV1"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "type": "stat",
+            "title": "PV2 Power",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 6,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#7EB26D"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_power",
+                    "legendFormat": "PV2"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "type": "stat",
+            "title": "PV1 Voltage",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 8,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_voltage",
+                    "legendFormat": "PV1 V"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "type": "stat",
+            "title": "PV2 Voltage",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 10,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_voltage",
+                    "legendFormat": "PV2 V"
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "type": "stat",
+            "title": "PV1 Current",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 12,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_current",
+                    "legendFormat": "PV1 A"
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "type": "stat",
+            "title": "PV2 Current",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 14,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_current",
+                    "legendFormat": "PV2 A"
+                }
+            ]
+        },
+        {
+            "id": 9,
+            "type": "stat",
+            "title": "Daily Production",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 16,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "yellow",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 5
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_production",
+                    "legendFormat": "Today"
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "type": "stat",
+            "title": "Total Production",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 18,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "green"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_production",
+                    "legendFormat": "Lifetime"
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "type": "stat",
+            "title": "Micro Inverter",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 20,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_micro_inverter_power",
+                    "legendFormat": "Micro"
+                }
+            ]
+        },
+        {
+            "id": 12,
+            "type": "stat",
+            "title": "Micro Inv Power",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 22,
+                "y": 1
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "area"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_micro_inverter_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 13,
+            "type": "timeseries",
+            "title": "⚡ PV Power",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 4
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 15
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV1"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F5A623",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV2"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#7EB26D",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FADE2A",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_power",
+                    "legendFormat": "PV1"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_power",
+                    "legendFormat": "PV2"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_power + deye_pv2_power",
+                    "legendFormat": "Total"
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "type": "timeseries",
+            "title": "🔌 PV Voltage",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 4
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 8
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV1 V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FF9830",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV2 V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FFD96A",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_voltage",
+                    "legendFormat": "PV1 V"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_voltage",
+                    "legendFormat": "PV2 V"
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "type": "timeseries",
+            "title": "〰️ PV Current",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 4
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 8
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV1 A"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F5A623",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "PV2 A"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#7EB26D",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_current",
+                    "legendFormat": "PV1 A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv2_current",
+                    "legendFormat": "PV2 A"
+                }
+            ]
+        },
+        {
+            "id": 20,
+            "type": "row",
+            "title": "🔋 Battery",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 12
+            }
+        },
+        {
+            "id": 21,
+            "type": "gauge",
+            "title": "Battery SOC",
+            "gridPos": {
+                "h": 6,
+                "w": 3,
+                "x": 0,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdLabels": true,
+                "showThresholdMarkers": true
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percent",
+                    "min": 0,
+                    "max": 100,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "orange",
+                                "value": 20
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 40
+                            },
+                            {
+                                "color": "green",
+                                "value": 60
+                            }
+                        ]
+                    },
+                    "color": {
+                        "mode": "thresholds"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_soc",
+                    "legendFormat": "SOC"
+                }
+            ]
+        },
+        {
+            "id": 22,
+            "type": "stat",
+            "title": "Battery Power",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 3,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "area"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_power",
+                    "legendFormat": "Power"
+                }
+            ]
+        },
+        {
+            "id": 23,
+            "type": "stat",
+            "title": "Battery Voltage",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 6,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_voltage",
+                    "legendFormat": "Voltage"
+                }
+            ]
+        },
+        {
+            "id": 24,
+            "type": "stat",
+            "title": "Battery Current",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 9,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_current",
+                    "legendFormat": "Current"
+                }
+            ]
+        },
+        {
+            "id": 25,
+            "type": "stat",
+            "title": "Battery Temp",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 12,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 10
+                            },
+                            {
+                                "color": "orange",
+                                "value": 35
+                            },
+                            {
+                                "color": "red",
+                                "value": 45
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_temperature",
+                    "legendFormat": "Temp"
+                }
+            ]
+        },
+        {
+            "id": 26,
+            "type": "stat",
+            "title": "Daily Charge",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 15,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_battery_charge",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 27,
+            "type": "stat",
+            "title": "Daily Discharge",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 18,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#E02F44"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_battery_discharge",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 28,
+            "type": "stat",
+            "title": "Total Charged",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 21,
+                "y": 13
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "green"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_battery_charge",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 29,
+            "type": "stat",
+            "title": "Bat Power",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 3,
+                "y": 16
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "area"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 30,
+            "type": "stat",
+            "title": "Bat Current",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 6,
+                "y": 16
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-blue"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_current",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 31,
+            "type": "stat",
+            "title": "Bat Voltage",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 9,
+                "y": 16
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-blue"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_voltage",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 32,
+            "type": "stat",
+            "title": "Total Discharged",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 12,
+                "y": 16
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "red"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_battery_discharge",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 33,
+            "type": "timeseries",
+            "title": "🔋 Battery Power + SOC",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 19
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "SOC %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#5794F2",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Power W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#E02F44",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_power",
+                    "legendFormat": "Power W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_soc",
+                    "legendFormat": "SOC %"
+                }
+            ]
+        },
+        {
+            "id": 34,
+            "type": "timeseries",
+            "title": "⚡ Battery Voltage + Current",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 19
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 8
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Current A"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "amp"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#6ED0E0",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Voltage V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#5794F2",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_voltage",
+                    "legendFormat": "Voltage V"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_current",
+                    "legendFormat": "Current A"
+                }
+            ]
+        },
+        {
+            "id": 35,
+            "type": "timeseries",
+            "title": "🌡️ Battery Temperature",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 19
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 18
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "green",
+                                "value": 10
+                            },
+                            {
+                                "color": "orange",
+                                "value": 35
+                            },
+                            {
+                                "color": "red",
+                                "value": 45
+                            }
+                        ]
+                    },
+                    "color": {
+                        "mode": "thresholds"
+                    }
+                },
+                "overrides": []
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_temperature",
+                    "legendFormat": "Bat Temp °C"
+                }
+            ]
+        },
+        {
+            "id": 40,
+            "type": "row",
+            "title": "⚡ Grid",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 27
+            }
+        },
+        {
+            "id": 41,
+            "type": "stat",
+            "title": "Grid Power",
+            "gridPos": {
+                "h": 3,
+                "w": 4,
+                "x": 0,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "area"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 500
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_grid_power",
+                    "legendFormat": "Grid"
+                }
+            ]
+        },
+        {
+            "id": 42,
+            "type": "stat",
+            "title": "Grid V L1",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 4,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#F2CC0C"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_voltage_l1",
+                    "legendFormat": "L1"
+                }
+            ]
+        },
+        {
+            "id": 43,
+            "type": "stat",
+            "title": "Grid V L2",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 6,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#F2CC0C"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_voltage_l2",
+                    "legendFormat": "L2"
+                }
+            ]
+        },
+        {
+            "id": 44,
+            "type": "stat",
+            "title": "Grid A L1",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 8,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_current_l1",
+                    "legendFormat": "L1"
+                }
+            ]
+        },
+        {
+            "id": 45,
+            "type": "stat",
+            "title": "Grid A L2",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 10,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_current_l2",
+                    "legendFormat": "L2"
+                }
+            ]
+        },
+        {
+            "id": 46,
+            "type": "stat",
+            "title": "Daily Bought",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 12,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "red"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_energy_bought",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 47,
+            "type": "stat",
+            "title": "Daily Sold",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 14,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "green"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_energy_sold",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 48,
+            "type": "stat",
+            "title": "Total Bought",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 16,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "dark-red"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_energy_bought",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 49,
+            "type": "stat",
+            "title": "Total Sold",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 18,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "dark-green"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_energy_sold",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 50,
+            "type": "stat",
+            "title": "Int CT L1",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 20,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_internal_ct_l1_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 51,
+            "type": "stat",
+            "title": "Ext CT L1",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 22,
+                "y": 28
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "super-light-yellow"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_external_ct_l1_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 52,
+            "type": "timeseries",
+            "title": "⚡ Grid Power",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 31
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 15
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Grid W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F2CC0C",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "CT L1"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FADE2A",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "CT L2"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FFAD00",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_grid_power",
+                    "legendFormat": "Grid W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_internal_ct_l1_power",
+                    "legendFormat": "CT L1"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_internal_ct_l2_power",
+                    "legendFormat": "CT L2"
+                }
+            ]
+        },
+        {
+            "id": 53,
+            "type": "timeseries",
+            "title": "🔌 Grid Voltage L1 + L2",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 31
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 8
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L1 V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F2CC0C",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L2 V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FFAD00",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_voltage_l1",
+                    "legendFormat": "L1 V"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_voltage_l2",
+                    "legendFormat": "L2 V"
+                }
+            ]
+        },
+        {
+            "id": 54,
+            "type": "timeseries",
+            "title": "〰️ Grid Current L1 + L2",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 31
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 8
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L1 A"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F2CC0C",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L2 A"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FFAD00",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_current_l1",
+                    "legendFormat": "L1 A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_current_l2",
+                    "legendFormat": "L2 A"
+                }
+            ]
+        },
+        {
+            "id": 60,
+            "type": "row",
+            "title": "🏠 Load",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 39
+            }
+        },
+        {
+            "id": 61,
+            "type": "stat",
+            "title": "Total Load",
+            "gridPos": {
+                "h": 3,
+                "w": 4,
+                "x": 0,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "area"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 1000
+                            },
+                            {
+                                "color": "red",
+                                "value": 2500
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_load_power",
+                    "legendFormat": "Total"
+                }
+            ]
+        },
+        {
+            "id": 62,
+            "type": "stat",
+            "title": "Load L1",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 4,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#B877D9"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_l1_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 63,
+            "type": "stat",
+            "title": "Load L2",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 6,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#CA95E5"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_l2_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 64,
+            "type": "stat",
+            "title": "Load Voltage",
+            "gridPos": {
+                "h": 3,
+                "w": 2,
+                "x": 8,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "purple"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_voltage",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 65,
+            "type": "stat",
+            "title": "Daily Consumption",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 10,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "purple"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_daily_load_consumption",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 66,
+            "type": "stat",
+            "title": "Total Consumption",
+            "gridPos": {
+                "h": 3,
+                "w": 3,
+                "x": 13,
+                "y": 40
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "kwatth",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "dark-purple"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_load_consumption",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 67,
+            "type": "timeseries",
+            "title": "🏠 Load Power",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 43
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 20
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#B877D9",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L1 W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#CA95E5",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L2 W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#DDA0DD",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_load_power",
+                    "legendFormat": "Total W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_l1_power",
+                    "legendFormat": "L1 W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_l2_power",
+                    "legendFormat": "L2 W"
+                }
+            ]
+        },
+        {
+            "id": 68,
+            "type": "timeseries",
+            "title": "🔌 Load Voltage",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 43
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "volt",
+                    "decimals": 1,
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 12
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Load V"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#B877D9",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_voltage",
+                    "legendFormat": "Load V"
+                }
+            ]
+        },
+        {
+            "id": 70,
+            "type": "row",
+            "title": "🔧 Inverter",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 51
+            }
+        },
+        {
+            "id": 71,
+            "type": "gauge",
+            "title": "DC Temp",
+            "gridPos": {
+                "h": 5,
+                "w": 3,
+                "x": 0,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdMarkers": true
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "min": 0,
+                    "max": 80,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 50
+                            },
+                            {
+                                "color": "red",
+                                "value": 65
+                            }
+                        ]
+                    },
+                    "color": {
+                        "mode": "thresholds"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_dc_temperature",
+                    "legendFormat": "DC"
+                }
+            ]
+        },
+        {
+            "id": 72,
+            "type": "gauge",
+            "title": "AC Temp",
+            "gridPos": {
+                "h": 5,
+                "w": 3,
+                "x": 3,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdMarkers": true
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "min": 0,
+                    "max": 80,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 50
+                            },
+                            {
+                                "color": "red",
+                                "value": 65
+                            }
+                        ]
+                    },
+                    "color": {
+                        "mode": "thresholds"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_ac_temperature",
+                    "legendFormat": "AC"
+                }
+            ]
+        },
+        {
+            "id": 73,
+            "type": "stat",
+            "title": "Grid Freq",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 6,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "hertz",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-blue"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_frequency",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 74,
+            "type": "stat",
+            "title": "Load Freq",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 9,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "hertz",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-blue"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_frequency",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 75,
+            "type": "stat",
+            "title": "Total Power",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 12,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "light-orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 76,
+            "type": "stat",
+            "title": "Inv L1 Power",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 15,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_inverter_l1_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 77,
+            "type": "stat",
+            "title": "Inv L2 Power",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 18,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_inverter_l2_power",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 78,
+            "type": "stat",
+            "title": "Alert",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 21,
+                "y": 52
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "background",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_alert",
+                    "legendFormat": "Alert"
+                }
+            ]
+        },
+        {
+            "id": 79,
+            "type": "stat",
+            "title": "Inv L1 Current",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 6,
+                "y": 54
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_current_l1",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 80,
+            "type": "stat",
+            "title": "Inv L2 Current",
+            "gridPos": {
+                "h": 2,
+                "w": 3,
+                "x": 9,
+                "y": 54
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "colorMode": "value",
+                "graphMode": "none"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "amp",
+                    "decimals": 2,
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "orange"
+                    }
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_current_l2",
+                    "legendFormat": ""
+                }
+            ]
+        },
+        {
+            "id": 81,
+            "type": "timeseries",
+            "title": "🌡️ DC + AC Temperature",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 57
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 12
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "DC °C"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FF7383",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "AC °C"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FA6400",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_dc_temperature",
+                    "legendFormat": "DC °C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_ac_temperature",
+                    "legendFormat": "AC °C"
+                }
+            ]
+        },
+        {
+            "id": 82,
+            "type": "timeseries",
+            "title": "〰️ Grid + Load Frequency",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 57
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "hertz",
+                    "decimals": 2,
+                    "custom": {
+                        "lineWidth": 2
+                    },
+                    "min": 49,
+                    "max": 51
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Grid Hz"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#6ED0E0",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Load Hz"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#00BDD1",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_frequency",
+                    "legendFormat": "Grid Hz"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_load_frequency",
+                    "legendFormat": "Load Hz"
+                }
+            ]
+        },
+        {
+            "id": 83,
+            "type": "timeseries",
+            "title": "⚡ Inverter Output Power",
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 57
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi"
+                },
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 10
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FA6400",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L1 W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FF9830",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "L2 W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FADE2A",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_power",
+                    "legendFormat": "Total W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_inverter_l1_power",
+                    "legendFormat": "L1 W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_inverter_l2_power",
+                    "legendFormat": "L2 W"
+                }
+            ]
+        },
+        {
+            "id": 90,
+            "type": "row",
+            "title": "🌊 Everything — Full System View",
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 65
+            }
+        },
+        {
+            "id": 91,
+            "type": "timeseries",
+            "title": "🌊 All Key Metrics — Power / SOC / Voltage / Temperature",
+            "description": "Power flows (W) on left axis • Battery SOC (%) on right axis • Voltages and temperature overlaid for trend reference",
+            "gridPos": {
+                "h": 14,
+                "w": 24,
+                "x": 0,
+                "y": 66
+            },
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "options": {
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                },
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "calcs": [
+                        "lastNotNull",
+                        "max",
+                        "min",
+                        "mean"
+                    ]
+                }
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "watt",
+                    "custom": {
+                        "lineWidth": 2,
+                        "fillOpacity": 5
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Solar W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F5A623",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Battery W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#5794F2",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Grid W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F2CC0C",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Load W"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#B877D9",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "SOC %"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "custom.axisSoftMin",
+                                "value": 0
+                            },
+                            {
+                                "id": "custom.axisSoftMax",
+                                "value": 100
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#73BF69",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.lineWidth",
+                                "value": 3
+                            },
+                            {
+                                "id": "custom.fillOpacity",
+                                "value": 15
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Bat V"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "volt"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#6ED0E0",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Grid V L1"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "volt"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FFAD00",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "DC °C"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "celsius"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FF7383",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "AC °C"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "celsius"
+                            },
+                            {
+                                "id": "custom.axisPlacement",
+                                "value": "right"
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FA6400",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_pv1_power + deye_pv2_power",
+                    "legendFormat": "Solar W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_power",
+                    "legendFormat": "Battery W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_grid_power",
+                    "legendFormat": "Grid W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_total_load_power",
+                    "legendFormat": "Load W"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_soc",
+                    "legendFormat": "SOC %"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_battery_voltage",
+                    "legendFormat": "Bat V"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_grid_voltage_l1",
+                    "legendFormat": "Grid V L1"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_dc_temperature",
+                    "legendFormat": "DC °C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "expr": "deye_ac_temperature",
+                    "legendFormat": "AC °C"
+                }
+            ]
         }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_dc_temperature", "legendFormat": "DC Temp" }]
-    },
-    {
-      "id": 52,
-      "type": "gauge",
-      "title": "AC Temperature",
-      "gridPos": { "h": 5, "w": 4, "x": 4, "y": 37 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdMarkers": true },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "celsius",
-          "min": 0,
-          "max": 80,
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 50 }, { "color": "red", "value": 65 }] },
-          "color": { "mode": "thresholds" }
-        }
-      },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_ac_temperature", "legendFormat": "AC Temp" }]
-    },
-    {
-      "id": 53,
-      "type": "stat",
-      "title": "Grid Frequency",
-      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 37 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "light-blue" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_grid_frequency", "legendFormat": "Grid Hz" }]
-    },
-    {
-      "id": 54,
-      "type": "stat",
-      "title": "Load Frequency",
-      "gridPos": { "h": 2, "w": 3, "x": 11, "y": 37 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
-      "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "light-blue" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_load_frequency", "legendFormat": "Load Hz" }]
-    },
-    {
-      "id": 55,
-      "type": "stat",
-      "title": "Total Inverter Power",
-      "gridPos": { "h": 2, "w": 3, "x": 8, "y": 39 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
-      "fieldConfig": { "defaults": { "unit": "watt", "color": { "mode": "fixed", "fixedColor": "light-orange" } } },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_power", "legendFormat": "Total Power" }]
-    },
-    {
-      "id": 56,
-      "type": "timeseries",
-      "title": "Temperature Over Time",
-      "gridPos": { "h": 5, "w": 10, "x": 14, "y": 37 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
-      "fieldConfig": {
-        "defaults": { "unit": "celsius", "custom": { "lineWidth": 2 } },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "DC" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF7383", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "AC" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FA6400", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_dc_temperature", "legendFormat": "DC" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_ac_temperature", "legendFormat": "AC" }
-      ]
-    },
-
-    {
-      "id": 60,
-      "type": "row",
-      "title": "🌊 Energy Flow Overview",
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 }
-    },
-    {
-      "id": 61,
-      "type": "timeseries",
-      "title": "Energy Flow — Solar / Battery / Grid / Load",
-      "description": "Key power flows over time",
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 43 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "options": {
-        "tooltip": { "mode": "multi" },
-        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max", "mean"] }
-      },
-      "fieldConfig": {
-        "defaults": { "unit": "watt", "custom": { "lineWidth": 2, "fillOpacity": 8 } },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "Solar" },   "properties": [{ "id": "color", "value": { "fixedColor": "#F5A623", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "Battery" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "Grid" },    "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "Load" },    "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_pv1_power + deye_pv2_power", "legendFormat": "Solar" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_battery_power", "legendFormat": "Battery" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_grid_power", "legendFormat": "Grid" },
-        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "deye_total_load_power", "legendFormat": "Load" }
-      ]
-    }
-  ]
+    ]
 }
