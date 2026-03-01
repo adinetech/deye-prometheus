@@ -86,6 +86,79 @@ Metrics are available at: `http://localhost:9105/metrics`
 
 ---
 
+## 🔧 Run as a systemd Service (Linux)
+
+This lets the exporter start automatically on boot and restart on failure.
+
+### 1. Create a virtual environment
+
+```bash
+python3 -m venv /opt/deye-env
+```
+
+### 2. Install dependencies into the venv
+
+> ⚠️ Common mistake: running `pip install` while inside an activated venv installs to the **wrong place** when systemd runs the service. Always use the full path to pip.
+
+```bash
+/opt/deye-env/bin/pip install -r /root/deye-prometheus/requirements.txt
+```
+
+### 3. Set up your `.env`
+
+```bash
+cp /root/deye-prometheus/.env.example /root/deye-prometheus/.env
+nano /root/deye-prometheus/.env   # fill in your real IP and serial
+```
+
+### 4. Create the service file
+
+```bash
+nano /etc/systemd/system/deye-exporter.service
+```
+
+Paste this:
+
+```ini
+[Unit]
+Description=Deye Inverter Prometheus Exporter
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/deye-prometheus
+ExecStart=/opt/deye-env/bin/python /root/deye-prometheus/main.py --exporter
+Restart=always
+RestartSec=5
+Environment="PYTHONUNBUFFERED=1"
+EnvironmentFile=/root/deye-prometheus/.env
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 5. Enable and start
+
+```bash
+systemctl daemon-reload
+systemctl enable deye-exporter   # start on boot
+systemctl start deye-exporter
+```
+
+### 6. Check logs
+
+```bash
+journalctl -u deye-exporter -f
+```
+
+You should see:
+```
+[deye-exporter] Prometheus metrics running on :9105/metrics
+[deye-exporter] Exposing 52 gauges — polling every 5s
+```
+
+---
+
 ## 📊 Prometheus / Grafana Setup
 
 ### Prometheus scrape config
