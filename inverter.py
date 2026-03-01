@@ -23,27 +23,28 @@ class InverterClient:
     """Wraps PySolarmanV5 and provides a single read_all() snapshot."""
 
     def __init__(self):
-        self._inv = PySolarmanV5(
+        # We don't connect here anymore — we connect on every poll to avoid stale sockets
+        pass
+
+    def read_all(self) -> dict:
+        """Connect, read all configured register blocks, disconnect, and return a merged dict."""
+        inv = PySolarmanV5(
             INVERTER_IP,
             INVERTER_SERIAL,
             port=INVERTER_PORT,
             mb_slave_id=INVERTER_MB_SLAVE_ID,
         )
-
-    def _read_block(self, start: int, end: int) -> dict:
-        """Read a contiguous register block in chunks, returns {addr: value}."""
-        length = end - start + 1
-        result = {}
-        for offset in range(start, start + length, CHUNK_SIZE):
-            size = min(CHUNK_SIZE, start + length - offset)
-            values = self._inv.read_holding_registers(offset, size)
-            for i, val in enumerate(values):
-                result[offset + i] = val
-        return result
-
-    def read_all(self) -> dict:
-        """Read all configured register blocks and return a merged {addr: value} dict."""
+        
         regs = {}
-        for start, end in REGISTER_BLOCKS:
-            regs.update(self._read_block(start, end))
+        try:
+            for start, end in REGISTER_BLOCKS:
+                length = end - start + 1
+                for offset in range(start, start + length, CHUNK_SIZE):
+                    size = min(CHUNK_SIZE, start + length - offset)
+                    values = inv.read_holding_registers(offset, size)
+                    for i, val in enumerate(values):
+                        regs[offset + i] = val
+        finally:
+            inv.disconnect()
+            
         return regs
