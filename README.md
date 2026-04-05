@@ -170,7 +170,7 @@ scrape_configs:
   - job_name: deye_inverter
     static_configs:
       - targets: ['localhost:9105']
-    scrape_interval: 10s
+    scrape_interval: 45s
 ```
 
 ### Grafana dashboard
