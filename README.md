@@ -58,7 +58,7 @@ INVERTER_SERIAL=1234567890     # Serial number shown in the logger web UI
 INVERTER_PORT=8899
 INVERTER_MB_SLAVE_ID=1
 EXPORTER_PORT=9105
-POLL_INTERVAL=5
+POLL_INTERVAL=45
 ```
 
 > **Finding your serial:** Open `http://<logger-ip>` in a browser (login: `admin`/`admin`),  
